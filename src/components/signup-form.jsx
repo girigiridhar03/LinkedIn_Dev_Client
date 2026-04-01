@@ -7,15 +7,26 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import { Info, Lock, Mail, User } from "lucide-react";
+import { Info, Loader2, Lock, Mail, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import { CustomInput } from "./ui/CustomInput";
 
-export function SignupForm({ className, renderText, pathname }) {
-  const isRegister = pathname === "/register";
+export function SignupForm({
+  className,
+  renderText,
+  onChange,
+  onSubmit,
+  isRegister,
+  formData,
+  errors,
+  authLoading,
+  loginError,
+  registerError,
+}) {
+  const backendErr = isRegister ? registerError : loginError;
 
   return (
-    <form className={cn("flex flex-col gap-6", className)}>
+    <form className={cn("flex flex-col gap-6", className)} onSubmit={onSubmit}>
       <FieldGroup className="w-full">
         <div className="flex flex-col gap-1 text-left">
           <h1 className="text-2xl font-bold">
@@ -28,15 +39,15 @@ export function SignupForm({ className, renderText, pathname }) {
             )}
           </p>
         </div>
-        <FieldDescription className="bg-[#fef2f3] text-red-500 p-4 rounded-2xl flex items-start gap-1.5">
-          <span>
-            <Info className="w-5 h-5 mt-1" />
-          </span>
-          <span>
-            We&apos;ll use this to contact you. We will not share your email
-            with anyone else.
-          </span>
-        </FieldDescription>
+        {backendErr && (
+          <FieldDescription className="bg-[#fef2f3] text-red-500 p-4 rounded-2xl flex items-center gap-1.5">
+            <span>
+              <Info className="w-4 h-4" />
+            </span>
+            <span>{backendErr}</span>
+          </FieldDescription>
+        )}
+
         {isRegister && (
           <Field>
             <FieldLabel htmlFor="name">Full Name</FieldLabel>
@@ -44,8 +55,16 @@ export function SignupForm({ className, renderText, pathname }) {
               id="name"
               type="text"
               placeholder="John Doe"
+              name="name"
+              value={formData.name}
+              onChange={onChange}
               icon={User}
             />
+            {errors?.name && (
+              <FieldDescription className="text-red-500">
+                {errors?.name}
+              </FieldDescription>
+            )}
           </Field>
         )}
 
@@ -55,8 +74,16 @@ export function SignupForm({ className, renderText, pathname }) {
             id="email"
             type="email"
             placeholder="Email"
+            name="email"
+            value={formData.email}
+            onChange={onChange}
             icon={Mail}
           />
+          {errors?.email && (
+            <FieldDescription className="text-red-500">
+              {errors?.email}
+            </FieldDescription>
+          )}
         </Field>
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
@@ -64,27 +91,38 @@ export function SignupForm({ className, renderText, pathname }) {
             id="password"
             type="password"
             placeholder="Password"
+            name="password"
+            value={formData.password}
+            onChange={onChange}
             icon={Lock}
           />
-          <FieldDescription>
-            Must be at least 8 characters long.
-          </FieldDescription>
+          {errors?.password && (
+            <FieldDescription className="text-red-500">
+              {errors?.password}
+            </FieldDescription>
+          )}
         </Field>
-        {isRegister && (
-          <Field>
-            <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
-            <CustomInput
-              id="confirm-password"
-              type="password"
-              placeholder="Password"
-              icon={Lock}
-            />
-            <FieldDescription>Please confirm your password.</FieldDescription>
-          </Field>
-        )}
 
         <Field>
-          <Button type="submit">Sign in</Button>
+          <Button type="submit" disabled={authLoading}>
+            {isRegister ? (
+              authLoading ? (
+                <>
+                  <Loader2 className={`animate-spin`} />
+                  <span>Creating...</span>
+                </>
+              ) : (
+                "Create Account"
+              )
+            ) : authLoading ? (
+              <>
+                <Loader2 className={`animate-spin`} />
+                <span>Signing...</span>
+              </>
+            ) : (
+              "Sign in"
+            )}
+          </Button>
         </Field>
         <FieldDescription className="px-6 text-center">
           {renderText(

@@ -1,11 +1,102 @@
 import { CodeXml } from "lucide-react";
 import { SignupForm } from "@/components/signup-form";
 import { useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { authLogin, authRegister } from "@/store/auth/auth.service";
+import { reset } from "@/store/auth/auth.reducer";
 export default function AuthPage() {
   const { pathname } = useLocation();
+  const isRegister = pathname === "/register";
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const { authLoading, loginError, registerError } = useSelector(
+    (state) => state.auth,
+  );
+  const dispatch = useDispatch();
 
   const renderText = (loginText, registerText) => {
     return pathname === "/login" ? loginText : registerText;
+  };
+
+  useEffect(() => {
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+    });
+    setErrors({
+      name: "",
+      email: "",
+      password: "",
+    });
+    dispatch(reset());
+  }, [pathname]);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
+  };
+
+  const handleSumbit = async (e) => {
+    e.preventDefault();
+
+    const errObj = {};
+
+    try {
+      if (isRegister) {
+        if (!formData.name || !formData.name.trim()) {
+          errObj.name = "Full name is required";
+        }
+
+        if (!formData.email || !formData.email.trim()) {
+          errObj.email = "Email is required";
+        }
+        if (!formData.password || !formData.password.trim()) {
+          errObj.password = "Password is required";
+        }
+
+        if (Object.keys(errObj)?.length > 0) {
+          console.log(errObj);
+          setErrors(errObj);
+          return;
+        }
+
+        const result = await dispatch(authRegister(formData)).unwrap();
+        console.log(result);
+      } else {
+        if (!formData.email || !formData.email.trim()) {
+          errObj.email = "Email is required";
+        }
+        if (!formData.password || !formData.password.trim()) {
+          errObj.password = "Password is required";
+        }
+
+        if (Object.keys(errObj).length > 0) {
+          setErrors(errObj);
+          return;
+        }
+        const result = await dispatch(authLogin(formData)).unwrap();
+        console.log("loginResponse", result);
+      }
+      setFormData({
+        name: "",
+        email: "",
+        password: "",
+      });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -56,7 +147,17 @@ export default function AuthPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-md">
-            <SignupForm renderText={renderText} pathname={pathname} />
+            <SignupForm
+              renderText={renderText}
+              onChange={handleChange}
+              onSubmit={handleSumbit}
+              isRegister={isRegister}
+              formData={formData}
+              errors={errors}
+              authLoading={authLoading}
+              loginError={loginError}
+              registerError={registerError}
+            />
           </div>
         </div>
       </div>
