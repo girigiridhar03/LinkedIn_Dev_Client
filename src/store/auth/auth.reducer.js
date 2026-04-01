@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authLogin, authRegister } from "./auth.service";
+import { authLogin, authLogout, authRegister } from "./auth.service";
 
 const initialState = {
   authLoading: false,
@@ -20,6 +20,7 @@ const authReducer = createSlice({
     builder
       .addCase(authLogin.pending, (state) => {
         state.authLoading = true;
+        state.loginError = null;
       })
       .addCase(authLogin.fulfilled, (state) => {
         state.authLoading = false;
@@ -30,6 +31,7 @@ const authReducer = createSlice({
       })
       .addCase(authRegister.pending, (state) => {
         state.authLoading = true;
+        state.registerError = null;
       })
       .addCase(authRegister.fulfilled, (state) => {
         state.authLoading = false;
@@ -37,6 +39,15 @@ const authReducer = createSlice({
       .addCase(authRegister.rejected, (state, { payload }) => {
         state.authLoading = false;
         state.registerError = payload;
+      })
+      .addCase(authLogout.pending, (state) => {
+        state.authLoading = true;
+      })
+      .addCase(authLogout.fulfilled, (state) => {
+        state.authLoading = false;
+      })
+      .addCase(authLogout.rejected, (state) => {
+        state.authLoading = false;
       }),
 });
 export const { reset } = authReducer.actions;

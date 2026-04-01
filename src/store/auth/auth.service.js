@@ -31,3 +31,17 @@ export const authRegister = createAsyncThunk(
     }
   },
 );
+
+export const authLogout = createAsyncThunk(
+  "auth/logout",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await api.post("/auth/logout");
+      return response?.data;
+    } catch (error) {
+      return rejectWithValue(
+        error.response?.data?.message || "Internal Server error",
+      );
+    }
+  },
+);

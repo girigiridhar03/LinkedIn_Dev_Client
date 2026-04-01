@@ -1,13 +1,15 @@
 import { CodeXml } from "lucide-react";
 import { SignupForm } from "@/components/signup-form";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { authLogin, authRegister } from "@/store/auth/auth.service";
 import { reset } from "@/store/auth/auth.reducer";
+import { getUserMeDetails } from "@/store/user/user.service";
 export default function AuthPage() {
   const { pathname } = useLocation();
   const isRegister = pathname === "/register";
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -74,6 +76,10 @@ export default function AuthPage() {
 
         const result = await dispatch(authRegister(formData)).unwrap();
         console.log(result);
+        if (result?.success) {
+          await dispatch(getUserMeDetails()).unwrap();
+          navigate("/feed");
+        }
       } else {
         if (!formData.email || !formData.email.trim()) {
           errObj.email = "Email is required";
@@ -88,6 +94,10 @@ export default function AuthPage() {
         }
         const result = await dispatch(authLogin(formData)).unwrap();
         console.log("loginResponse", result);
+        if (result?.success) {
+          await dispatch(getUserMeDetails()).unwrap();
+          navigate("/feed");
+        }
       }
       setFormData({
         name: "",

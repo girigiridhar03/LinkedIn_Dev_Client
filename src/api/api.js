@@ -17,7 +17,6 @@ api.interceptors.response.use(
     const isAuthPage = ["/login", "/register"].includes(
       window.location.pathname,
     );
-
     if (err.response?.status === 401 && !isAuthCheck && !isAuthPage) {
       window.location.href = "/login";
     }
@@ -25,4 +24,4 @@ api.interceptors.response.use(
   },
 );
 
-export default api
+export default api;
