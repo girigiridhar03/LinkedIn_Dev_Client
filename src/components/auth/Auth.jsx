@@ -107,7 +107,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
+    <div className="grid min-h-svh lg:grid-cols-[45%_55%]">
       <div className="relative hidden lg:flex lg:flex-col lg:h-full bg-linear-to-br from-primary to-primary/80 p-10 text-primary-foreground">
         <div className="flex items-center gap-2.5">
           <span
@@ -122,13 +122,13 @@ export default function AuthPage() {
           <span className="text-xl font-semibold">DevConnect</span>
         </div>
         <div className="flex-1 flex h-full justify-center flex-col gap-9">
-          <div className="text-4xl w-[50%] font-semibold leading-12">
+          <div className="text-4xl w-[80%] font-semibold leading-12">
             {renderText(
               "Connect with developers who share your passion.",
               "Join 50,000+ developers building together.",
             )}
           </div>
-          <div className="opacity-65 w-[80%]">
+          <div className="opacity-65 w-[90%]">
             Build your professional network, share projects, find collaborators,
             and grow your career in the developer community.
           </div>
