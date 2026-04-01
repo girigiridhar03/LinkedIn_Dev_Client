@@ -50,7 +50,7 @@ export default function AuthPage() {
     setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-  const handleSumbit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const errObj = {};
@@ -69,13 +69,11 @@ export default function AuthPage() {
         }
 
         if (Object.keys(errObj)?.length > 0) {
-          console.log(errObj);
           setErrors(errObj);
           return;
         }
 
         const result = await dispatch(authRegister(formData)).unwrap();
-        console.log(result);
         if (result?.success) {
           await dispatch(getUserMeDetails()).unwrap();
           navigate("/feed");
@@ -93,7 +91,6 @@ export default function AuthPage() {
           return;
         }
         const result = await dispatch(authLogin(formData)).unwrap();
-        console.log("loginResponse", result);
         if (result?.success) {
           await dispatch(getUserMeDetails()).unwrap();
           navigate("/feed");
@@ -160,7 +157,7 @@ export default function AuthPage() {
             <SignupForm
               renderText={renderText}
               onChange={handleChange}
-              onSubmit={handleSumbit}
+              onSubmit={handleSubmit}
               isRegister={isRegister}
               formData={formData}
               errors={errors}

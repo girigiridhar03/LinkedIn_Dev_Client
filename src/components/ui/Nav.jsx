@@ -91,7 +91,7 @@ const Nav = () => {
             </DropdownMenuTrigger>
 
             <DropdownMenuContent
-              className={"border-2 border-muted w-62.5 rounded-2xl"}
+              className="border-2 border-muted w-62.5 rounded-2xl"
               align="end"
             >
               <div className="p-3">

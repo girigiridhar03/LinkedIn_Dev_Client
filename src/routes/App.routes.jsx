@@ -5,8 +5,6 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { ProtectedRoute, PublicRoute } from "./RouteGuards.route.jsx";
 
 const AppRoutes = () => {
-
-
   return (
     <Routes>
       <Route element={<PublicRoute />}>
